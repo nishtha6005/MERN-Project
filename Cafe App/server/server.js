@@ -5,14 +5,12 @@ const cors = require('cors')
 const bodyParser=require('body-parser')
 const auth = require('../server/route/route.auth')
 const menu = require('../server/route/route.menu')
-const cookieParser = require('cookie-parser')
 
 const app = express()
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }))
-app.use(cookieParser())
+app.use(cors())
 app.use('/public',express.static('public'))
 
 app.use('/auth',auth)

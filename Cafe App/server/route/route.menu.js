@@ -21,11 +21,12 @@ const router = express.Router()
 router.get('/all',auth,MenuController.getAllMenuItems);
 
 // router.get('/get/:quesNo?sort=create-asc',auth,isAdmin,MenuController.getCreatedAsc)
-// router.get('/get?sort=create-asc',auth,isAdmin,MenuController.getCreatedAsc)
+router.get('/get',auth,isAdmin,MenuController.getCreatedAsc)
 
+// ?sort=menuCreatedTime&?order=asc
 router.get('/user/get/:quesNo',auth,MenuController.getMenuItemsForUser);
 
-router.get('/search',auth, isAdmin, MenuController.search);
+router.get('/search',auth, MenuController.search);
 
 router.get('/get/:quesNo',auth,isAdmin,MenuController.getOneMenuItem);
 

@@ -21,8 +21,7 @@ let AuthSchema = new mongoose.Schema({
         type:String
     },
     userCreatedTime:{
-        type:Date,
-        // default:Date.now
+        type:Date
     }
 })
 

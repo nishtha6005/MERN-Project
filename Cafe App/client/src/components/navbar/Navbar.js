@@ -2,25 +2,23 @@ import React, {useEffect,useState} from "react";
 import { Link, useLocation } from 'react-router-dom'
 
 function Navbar(){
-    const [bearer,setbearer]=useState('')
-    const [isAdmin, setIsAdmin]=useState()
+    // const [bearer,setbearer]=useState('')
+    // const [isAdmin, setIsAdmin]=useState()
 
-    const location = useLocation()
-
+    var isAdmin = window.localStorage.getItem("admin")
+    console.log(isAdmin)
+    
     useEffect(()=>{
-        const token = window.localStorage.getItem("bearer")
-        const admin = window.localStorage.getItem("admin")
-        console.log("admin", admin)
-        console.log("bearer", token)
-        setbearer(token)
-        setIsAdmin(admin)
-        // setbearer(location.state.bearer)
-        // setIsAdmin(location.state.isAdmin)
-
-    },[bearer,isAdmin])
+        // var isAdmin = window.localStorage.getItem("admin")
+        // const token = window.localStorage.getItem("bearer")
+        // const admin = window.localStorage.getItem("admin")
+        // console.log("admin", admin)
+        // console.log("bearer", token)
+        // setbearer(token)
+        // setIsAdmin(admin)
+    })
 
     
-
     return(
         <>
             <nav className="navbar navbar-expand-md navbar-dark bg-dark">
@@ -77,7 +75,8 @@ function Navbar(){
                         }
                                                 
                         {
-                            bearer === null || bearer === '' ?
+                            isAdmin == null ?
+                            // bearer === null || bearer === '' ?
                             <li className="nav-item">
                                 <Link 
                                     className="nav-link" 

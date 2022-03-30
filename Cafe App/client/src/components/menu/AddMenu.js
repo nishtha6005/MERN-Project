@@ -10,26 +10,17 @@ function AddMenu(){
     })
     const [hasError,setHasError]=useState(true)
     const [errors,setErrors]=useState({})
-    // const[alert,setAlert]=useState({
-    //     hasAlert:false,alertMsg:'',alertType:''
-    // })
 
     const ref = useRef()
     const navigate = useNavigate()
 
     useEffect(()=>{
         document.title='Add Menu Items '
-        
-        // const timer = setTimeout(() => {
-        //     setAlert({hasAlert:false,alertMsg:'',alertType:''});
-        //   }, 3000);
-        
         const token = window.localStorage.getItem('bearer')
         if (token === null)
         {
             navigate('/signin')
         }
-        // return () => clearTimeout(timer);
     },[])
 
     const handleChange=e=>{
@@ -51,6 +42,8 @@ function AddMenu(){
     }
 
     const validate=(name,value)=>{
+        let {itemName , price , description , image}=menu
+        
         if(name === 'itemName' && value.trim().length ===0)
         {
             setHasError(true)
@@ -66,15 +59,16 @@ function AddMenu(){
             setHasError(true)
             return "Price name cannot be empty"
         }
-        else{
-            setHasError(false)
+        else
+        {            
+            // if(itemName.trim() && price.trim() && description.trim()){
+                setHasError(false)
+            // }
         }
-
     }
 
     const addItem = e =>{
         e.preventDefault()
-        // let {itemName,price}=menu
         let formData = new FormData()
         formData.append('image',menu.image)
         formData.append('itemName',menu.itemName)
@@ -87,12 +81,6 @@ function AddMenu(){
                 autoClose: 3000,
             })
         }
-        // else if(errors==={})
-        // {
-        //     console.log("ERROR 2",errors)
-        //     setAlert({hasAlert:true,alertMsg:'Please enter valid data',alertType:'alert-danger'})
-        //     setErrors({})
-        // }
         else
         {
             axios.post('http://localhost:8000/menu/add',formData,
@@ -123,20 +111,6 @@ function AddMenu(){
 
     return(
         <>
-        {/* <br/>
-        <div className='row'>
-            <div className='col-md-4'></div>
-            <div className='col-md-4'>
-                {
-                    alert.hasAlert && 
-                        <div className ={`alert ${alert.alertType} text-center`} role="alert">
-                            {alert.alertMsg}
-                        </div>
-                }   
-            </div>
-            <div className='col-md-4'></div>
-        </div> */}
-
         <div className='box-model'>
             <h2 className='m-3'>Add Menu-Item</h2>
             <form method='post'>

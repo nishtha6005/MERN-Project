@@ -4,14 +4,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 function SignUp(){
     const [user,setUser]=useState({
         username:'',email:'',password:'',confirmPassword:''
     })
-    // const[alert,setAlert]=useState({
-    //     hasError:false,alertMsg:''
-    // })
     const [hasError,setHasError]=useState(true)
     const [errors,setErrors]=useState({})
 
@@ -19,12 +15,6 @@ function SignUp(){
 
     useEffect(()=>{
         document.title='Sign Up'
-
-        // const timer = setTimeout(() => {
-        //     setAlert({hasError:false,alertMsg:''});
-        //   }, 3000);
-        
-        // return () => clearTimeout(timer);
     })
 
     const handleChange=e=>{
@@ -36,7 +26,7 @@ function SignUp(){
     }
 
     const validate=(name,value)=>{
-        if(name==='username' && !/^[A-Za-z0-9_@#$%^&*]+$/.test(value))
+        if(name==='username' && !/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{6,}$/.test(value))
         {
             setHasError(true)
             return 'Enter Valid Username'
@@ -71,7 +61,6 @@ function SignUp(){
                 position: "top-center",
                 autoClose: 3000,
             })
-            // setAlert({hasError:true,alertMsg:'Please fill out all the fields'})
         }
         // else if(errors==={})
         // {
@@ -103,29 +92,13 @@ function SignUp(){
                     position: "top-center",
                     autoClose: 3000,
                 })
-                // setAlert({hasError:true,alertMsg:'User Already Exists'})
                 setUser({username:'',email:'',password:'',confirmPassword:''})
             })
         }
-        
     }
 
     return(
         <>
-        {/* <br/>
-        <div className='row'>
-            <div className='col-md-4'></div>
-            <div className='col-md-4'>
-                {
-                    alert.hasError && 
-                        <div className ="alert alert-danger text-center" role="alert">
-                            {alert.alertMsg}
-                        </div>
-                }   
-            </div>
-            <div className='col-md-4'></div>
-        </div> */}
-
         <div className='box-model'>
             <h2>Create Account</h2>
             <Link to='/signin' >Already a user? Login</Link><br/><br/>

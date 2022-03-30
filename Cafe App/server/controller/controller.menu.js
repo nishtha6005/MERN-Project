@@ -23,36 +23,38 @@ exports.getAllMenuItems= async (request,response)=>{
     }
 }
 
-// exports.getCreatedAsc = async (request,response)=>{
-//     let limit = 2
-//     let skip=request.params.quesNo
-//     try
-//     {
-//         const length = await Menu.find({isDeleted:false}).count()
+exports.getCreatedAsc = async (request,response)=>{
+    let limit = 2
+    let field=request.query.sort
+    let order = request.query.order === 'asc' ? 1 : -1
+    console.log(field, order)
+    try
+    {
+        const length = await Menu.find({isDeleted:false}).count()
         
-//         const user = await Menu.find({isDeleted:false}).sort({menuCreatedTime:1}).limit(limit).skip(skip)
+        const user = await Menu.find({isDeleted:false}).sort({field:order})
         
-//         response.status(200).send({
-//             success:true,
-//             user:request.rootUser,
-//             // token:request.token,
-//             items:user,
-//             length:length
-//         })
-//     }
-//     catch(err)
-//     {
-//         response.status(400).send({
-//             error: 'Your request could not be processed. Please try again.'
-//         });
-//     }
-// }
+        response.status(200).send({
+            success:true,
+            user:request.rootUser,
+            items:user,
+            length:length
+        })
+    }
+    catch(err)
+    {
+        response.status(400).send({
+            error: 'Your request could not be processed. Please try again.'
+        });
+    }
+}
 
 exports.search=(req,res)=>{
     let pname = req.query.menu
-    if(pname!=null)
+    limit=3
+    if(pname)
     {
-        Menu.find({itemName:{$regex:pname,$options:/i/},isDeleted:false})
+        Menu.find({itemName:{$regex:pname,$options:/i/},isDeleted:false}).sort({menuCreatedTime:-1}).limit(3)
         .then(result=>{
                 res.status(200)
                 .send({
@@ -70,17 +72,16 @@ exports.search=(req,res)=>{
 }
 
 exports.getOneMenuItem= async (request,response)=>{
-    let limit = 2
+    let limit = 3
     let skip=request.params.quesNo
     try
     {
         const length = await Menu.find({isDeleted:false}).count()
-        const user = await Menu.find({isDeleted:false}).sort({menuCreatedTime:-1}).limit(limit).skip(skip)
+        const menu = await Menu.find({isDeleted:false}).sort({menuCreatedTime:-1}).limit(limit).skip(skip)
         response.status(200).send({
             success:true,
             user:request.rootUser,
-            // token:request.token,
-            items:user,
+            items:menu,
             length:length
         })
     }
@@ -94,7 +95,7 @@ exports.getOneMenuItem= async (request,response)=>{
 }
 
 exports.getMenuItemsForUser= async (request,response)=>{
-    let limit = 2
+    let limit = 4
     let skip=request.params.quesNo
     try
     {
@@ -103,7 +104,6 @@ exports.getMenuItemsForUser= async (request,response)=>{
         response.status(200).send({
             success:true,
             user:request.rootUser,
-            // token:request.token,
             items:user,
             length:length
         })

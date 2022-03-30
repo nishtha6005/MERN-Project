@@ -2,10 +2,7 @@ const jwt = require('jsonwebtoken')
 const Auth = require('../model/model.auth')
 
 const verifyToken = async (req,res,next)=>{
-    
     const token= req.headers.authorization.split(" ")
-    // const token = req.cookie('JWT')
-    // console.log("Token",req.cookies)
     try
     {
         const user = jwt.verify(token[1],process.env.REACT_APP_SECRETKEY)

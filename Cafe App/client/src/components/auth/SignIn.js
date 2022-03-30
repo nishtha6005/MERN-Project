@@ -34,10 +34,7 @@ function SignIn(){
         }
         else
         {
-            axios.post('http://localhost:8000/auth/signin',credentials,
-            {
-                withCredentials:true
-            })
+            axios.post('http://localhost:8000/auth/signin',credentials)
             .then(res=>{
                 window.localStorage.setItem("bearer",res.data.token) 
                 window.localStorage.setItem("admin",res.data.isAdmin)

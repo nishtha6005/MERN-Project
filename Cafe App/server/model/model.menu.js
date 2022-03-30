@@ -25,12 +25,10 @@ let MenuSchema = new mongoose.Schema({
         default:false
     },
     menuCreatedTime:{
-        type:Date,
-        // default:Date.now()
+        type:Date
     },
     menuUpdateTime:{
-        type:Date,
-        // default:Date.now()
+        type:Date
     }
 })
 
