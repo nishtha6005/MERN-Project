@@ -46,10 +46,10 @@ function SignUp(){
             setHasError(true)
             return 'Enter Valid Email'
         }
-        if(name === 'password' && value.length <6)
+        if(name === 'password' && !/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(value))
         {
             setHasError(true)
-            return "Minimum password length should be 6 caharaters "
+            return "Minimum password length should be 8 characters. Password must have at least one special symbol, digit, one uppercase and one lowercase letter."
         }
         if(name==='confirmPassword' && user.password != value)
         {

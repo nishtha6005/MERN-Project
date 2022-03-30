@@ -11,12 +11,11 @@ function ListMenu(){
     const [updatedData, setUpdatetedData] = useState({
         price:'',isAvailable:'', itemName:'',description:'',image:''
     })
+    const [totalRecords, setTotalRecords] = useState(0)
+    const recordsPerPage = 2
     const [hasError,setHasError]=useState(false)
     const [errors,setErrors]=useState({})
     
-    // const [pagination,setPagination]=useState({
-    //     recordsPerPage:1,totalRecords:0,pageCount: 0,
-    // })
     const ref = useRef()
     const navigate = useNavigate()
 
@@ -33,7 +32,7 @@ function ListMenu(){
     },[])
 
     const getMenuItems=()=>{
-        axios.get('http://localhost:8000/menu/all',
+        axios.get(`http://localhost:8000/menu/get/0`,
         {
             headers:{
                 authorization:`Bearer ${window.localStorage.getItem('bearer')}`
@@ -42,7 +41,7 @@ function ListMenu(){
         .then(res=>{
             setItems(res.data.items)
             setFilteredItems(res.data.items)
-            // setPagination({totalRecords:res.data.length})
+            setTotalRecords(res.data.length)
         })
         .catch(error=>{
             console.log(error)
@@ -67,9 +66,26 @@ function ListMenu(){
         })
     }
 
-    // const handlepageCountChange=index=>{
-    //     setPagination({pageCount:index*pagination.recordsPerPage})
-    // }
+    //PAGINATION HANDLER FUNCTION
+    const handlepageCountChange=index=>{
+        // const skip = index*recordsPerPage
+        axios.get(`http://localhost:8000/menu/get/${index}`,
+        {
+            headers:{
+                authorization:`Bearer ${window.localStorage.getItem('bearer')}`
+            }
+        })
+        .then(res=>{
+            console.log(res.data.length, typeof res.data.length)
+            setItems(res.data.items)
+            setFilteredItems(res.data.items)
+            setTotalRecords(res.data.length)
+        })
+        .catch(error=>{
+            console.log(error)
+            navigate('/signin')
+        })
+    }
 
     // VALIDATION OF FIELDS
     const validate=(name,value)=>{
@@ -115,12 +131,6 @@ function ListMenu(){
         formData.append('price',updatedData.price)
         formData.append('isAvailable',updatedData.isAvailable)
         axios.put(`http://localhost:8000/menu/update/${id}`, formData,
-            // {
-            //     itemName:updatedData.itemName,
-            //     description:updatedData.description,
-            //     price: updatedData.price,
-            //     isAvailable: updatedData.isAvailable
-            // },
             {
                 headers:{
                     authorization:`Bearer ${window.localStorage.getItem('bearer')}`
@@ -187,6 +197,23 @@ function ListMenu(){
         
     // }
 
+    // const searchItems=(e)=>{
+    //     console.log(e.target.value)
+    //     axios.get(`http://localhost:8000/menu/search?menu=${e.target.value}`,
+    //     {
+    //         headers:{
+    //             authorization:`Bearer ${window.localStorage.getItem('bearer')}`
+    //         }
+    //     })
+    //     .then(res=>{
+    //         setFilteredItems(res.data.search)
+    //         setTotalRecords(res.data.length)
+    //     })
+    //     .catch(err=>{
+    //         console.log(err)
+    //     })
+    // }
+
     const getDateTime=(datetime)=>{
         const date = new Date(datetime)
         return date.toLocaleString()
@@ -195,21 +222,33 @@ function ListMenu(){
     return(    
     <>
         <h2 className='text-center m-3'>List of Menu Items</h2>
-        {/* <div className='text-center m-3'>
+        {/* <div className='text-center m-2'>
             <input 
                 type='text' 
                 name='search' 
-                className='input-control'
-                aria-label="Search"
-                placeholder=' Search ' 
+                className='input-control px-2'
+                aria-label="Search "
+                size='40'
+                placeholder=' Search Menu Items By Name' 
                 onChange={(e)=>searchItems(e)}
             />
         </div> */}
+        {/* <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" 
+                    type="button" 
+                    id="dropdownMenuButton1" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false">
+                Dropdown button
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+                <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+        </div> */}
         {
             filteredItems
-            .sort((a, b) => {
-                return getDateTime(b.menuCreatedTime) - getDateTime(a.menuCreatedTime);
-            })
             .map((item,index)=>{
             return(
             <>                        
@@ -292,6 +331,7 @@ function ListMenu(){
                                                     name='image' 
                                                     id='image'
                                                     ref={ref}
+                                                    required="true"
                                                     encType="multipart/form-data"
                                                     onChange={(e)=>uploadImage(e)} 
                                                 />
@@ -327,7 +367,6 @@ function ListMenu(){
                                                     onClick={() => deleteHandler(item._id)}> Delete
                                                 </button>
                                             </div>
-                                            
                                         </div>
                                     </>
                                 }    
@@ -340,106 +379,17 @@ function ListMenu(){
             )})
         }
         
-        {/* <div className='mx-5'>
-        <table className='table table-striped '>
-            <tbody>
-                <tr>
-                    <th>Item Name</th>
-                    <th>Price</th>
-                    <th>Is Available</th>
-                    <th> Created Time</th>
-                    <th> Updated Time</th>
-                    <th>Update</th>
-                    <th>Delete</th>
-                </tr>
-                {
-                    filteredItems
-                        .sort((a, b) => {
-                            return b.menuCreatedTime - a.menuCreatedTime;
-                        })
-                        // .slice(pagination.pageCount,pagination.pageCount+pagination.recordsPerPage)
-                        .map((item,index)=>{
-                        return(
-                            <>
-                                {
-                                    item.isDeleted === false && 
-                                    <tr key={index}>
-                                        <td>{item.itemName}</td>
-                                        <td>{item.price}</td>
-                                        <td>{item.isAvailable ? 'True' : 'False'}</td>
-                                        <td>{item.menuCreatedTime}</td>
-                                        <td>{item.menuUpdateTime}</td>
-                                        <td>
-                                            <button 
-                                                className="btn btn-outline-warning" 
-                                                onClick={() => edit(item._id,item.price,item.isAvailable)}> Update
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <button 
-                                                className="btn btn-outline-danger" 
-                                                onClick={() => deleteHandler(item._id)}> Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                }
-                                {
-                                    selectedId === item._id &&
-                                    <tr key={item._id}>
-                                        <td></td>
-                                        <td></td>
-                                        <td>
-                                            <input 
-                                                type="number" 
-                                                className="form-control" 
-                                                placeholder="Enter price" 
-                                                value={updatedData.price}
-                                                name='price' 
-                                                required
-                                                onChange={(e)=>handleChange(e)}
-                                            />
-                                            <p className='text-danger'>{errors.price}</p>
-                                        </td>
-                                        <td>
-                                            <div 
-                                                className="form-group">
-                                                <input 
-                                                    type="checkbox" 
-                                                    className="m-3" 
-                                                    name='isAvailable' 
-                                                    checked={updatedData.isAvailable}
-                                                    onChange={(e)=>handleChange(e)}  
-                                                />
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <button 
-                                                className="btn btn-success" 
-                                                disabled={hasError}
-                                                onClick={() => updateHandler(item._id)}> Save
-                                            </button>
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                }
-                            </>
-                        )
-                    })
-                }
-            </tbody>
-        </table>
-        </div> */}
-        {/* <div className="row">
+        <div className="row">
             <div className="col-md-5 m-auto">
-                {[...Array(Math.ceil(pagination.totalRecords / pagination.recordsPerPage))].map((a, idx) => (
-                    <button key={idx} className="btn btn-primary mx-1" onClick={(idx) =>handlepageCountChange(idx)}>{idx + 1}</button>
+                {[...Array(Math.ceil(totalRecords / recordsPerPage))].map((a, idx) => (
+                    <button key={idx} className="btn btn-primary m-2" onClick={()=>handlepageCountChange(idx*recordsPerPage)}>{idx + 1}</button>
                 ))}
             </div>
-        </div> */}
+        </div>
          {/* <div className="row">
             <div className="col-md-5 m-auto">
-                { Array.from(Array(Math.ceil(pagination.totalRecords / pagination.recordsPerPage))).map((a, idx) => (
-                    <button key={idx} className="btn btn-primary mx-1" onClick={(idx) =>handlepageCountChange(idx)}>{idx + 1}</button>
+                { Array.from(Array(Math.ceil(totalRecords / recordsPerPage))).map((a, idx) => (
+                    <button key={idx} className="btn btn-primary mx-1" >{idx + 1}</button>
                 ))}
             </div>
         </div>  */}

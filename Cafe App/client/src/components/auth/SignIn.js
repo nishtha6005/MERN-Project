@@ -40,14 +40,15 @@ function SignIn(){
             })
             .then(res=>{
                 window.localStorage.setItem("bearer",res.data.token) 
+                window.localStorage.setItem("admin",res.data.isAdmin)
                 // toast.success("Login Successfull",{
                 //     position: "top-center",
                 //     autoClose: 1000,
                 // })     
                 if(res.data.isAdmin === true)
-                    return navigate('/admin')
+                    return navigate('/admin',{state:{bearer:res.data.token,isAdmin:res.data.isAdmin}})
                 else 
-                    return navigate('/menu-items')
+                    return navigate('/menu-items',{state:{bearer:res.data.token,isAdmin:res.data.isAdmin}})
             })
             .catch(error=>{
                 toast.error("Invalid User Credentials",{
@@ -56,8 +57,7 @@ function SignIn(){
                 })
                 setCredentials({email:'',password:''})
             })
-        }
-        
+        }   
     }
 
     return (

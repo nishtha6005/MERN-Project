@@ -1,13 +1,25 @@
 import React, {useEffect,useState} from "react";
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 function Navbar(){
     const [bearer,setbearer]=useState('')
+    const [isAdmin, setIsAdmin]=useState()
+
+    const location = useLocation()
 
     useEffect(()=>{
         const token = window.localStorage.getItem("bearer")
+        const admin = window.localStorage.getItem("admin")
+        console.log("admin", admin)
+        console.log("bearer", token)
         setbearer(token)
-    })
+        setIsAdmin(admin)
+        // setbearer(location.state.bearer)
+        // setIsAdmin(location.state.isAdmin)
+
+    },[bearer,isAdmin])
+
+    
 
     return(
         <>
@@ -31,32 +43,41 @@ function Navbar(){
                                 data-bs-toggle="modal">Home
                             </Link>
                         </li>
-                        <li className="nav-item">
-                            <Link 
-                                className="nav-link" 
-                                to="/admin/add-menu" 
-                                data-bs-target="#myModal" 
-                                data-bs-toggle="modal">Add Menu
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link 
-                                className="nav-link" 
-                                to="/admin" 
-                                data-bs-target="#myModal" 
-                                data-bs-toggle="modal">All Menus
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link 
-                                className="nav-link" 
-                                to="/menu-items"
-                                data-bs-target="#myModal" 
-                                data-bs-toggle="modal">Menu
-                            </Link>
-                        </li> 
                         {
-                            bearer === null || bearer == '' ?
+                            isAdmin === 'true' &&
+                            <>
+                                <li className="nav-item">
+                                    <Link 
+                                        className="nav-link" 
+                                        to="/admin/add-menu" 
+                                        data-bs-target="#myModal" 
+                                        data-bs-toggle="modal">Add Menu
+                                    </Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link 
+                                        className="nav-link" 
+                                        to="/admin" 
+                                        data-bs-target="#myModal" 
+                                        data-bs-toggle="modal">All Menus
+                                    </Link>
+                                </li>
+                            </>
+                        }
+                        {
+                            isAdmin === 'false' &&
+                            <li className="nav-item">
+                                <Link 
+                                    className="nav-link" 
+                                    to="/menu-items"
+                                    data-bs-target="#myModal" 
+                                    data-bs-toggle="modal">Menu
+                                </Link>
+                            </li> 
+                        }
+                                                
+                        {
+                            bearer === null || bearer === '' ?
                             <li className="nav-item">
                                 <Link 
                                     className="nav-link" 

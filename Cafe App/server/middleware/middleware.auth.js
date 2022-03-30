@@ -8,11 +8,8 @@ const verifyToken = async (req,res,next)=>{
     // console.log("Token",req.cookies)
     try
     {
-        // console.log("INSIDE VERIFY TOKEN",token[1])
         const user = jwt.verify(token[1],process.env.REACT_APP_SECRETKEY)
-        // console.log(user)
         const rootUser = await Auth.findOne({_id:user.id})
-        // console.log('Root',rootUser)
         if(!rootUser)
         {
             throw new Error("User not found")

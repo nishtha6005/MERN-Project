@@ -74,19 +74,18 @@ function AddMenu(){
 
     const addItem = e =>{
         e.preventDefault()
-        let {itemName,price}=menu
+        // let {itemName,price}=menu
         let formData = new FormData()
         formData.append('image',menu.image)
         formData.append('itemName',menu.itemName)
         formData.append('description',menu.description)
         formData.append('price',menu.price)
-        if(!itemName.trim() || !price)
+        if(!menu.itemName.trim() || !menu.price.trim())
         {
             toast.error("Please fill out all the fields",{
                 position: "top-center",
                 autoClose: 3000,
             })
-            // setAlert({hasAlert:true,alertMsg:'Please fill out all the fields',alertType:'alert-danger'})
         }
         // else if(errors==={})
         // {
@@ -107,7 +106,6 @@ function AddMenu(){
                     position: "top-center",
                     autoClose: 3000,
                 })
-                // setAlert({hasAlert:true,alertMsg:'Menu Item added successfully',alertType:'alert-success'})
                 ref.current.value=''
                 setMenu({itemName:'',price:'',description:''})
             })

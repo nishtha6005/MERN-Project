@@ -5,27 +5,74 @@ import { useNavigate } from 'react-router-dom'
 function Menu(){
     const [items,setItems] = useState([])
     const [username,setUSername] = useState('')
+    const [totalRecords, setTotalRecords] = useState(0)
+    const recordsPerPage = 2
 
     const navigate = useNavigate();
 
     useEffect(()=>{
         document.title='Menu Items '
-        axios.get('http://localhost:8000/menu/all',
+        // axios.get('http://localhost:8000/menu/all',
+        // {
+        //     headers:{
+        //         authorization:`Bearer ${window.localStorage.getItem('bearer')}`
+        //     }
+        // })
+        // .then(res=>{
+        //     setItems(res.data.items)
+        //     setUSername(res.data.user.username)
+
+        // })
+        // .catch(error=>{
+        //     console.log(error)
+        //     navigate('/signin')
+        // })
+        const token = window.localStorage.getItem('bearer')
+        if (token === null)
+        {
+            navigate('/signin')
+        }
+        getMenuItems()
+    },[])
+
+    const getMenuItems=()=>{
+        axios.get(`http://localhost:8000/menu/user/get/0`,
         {
             headers:{
                 authorization:`Bearer ${window.localStorage.getItem('bearer')}`
             }
         })
         .then(res=>{
+            console.log(res.data.length, typeof res.data.length)
             setItems(res.data.items)
             setUSername(res.data.user.username)
-
+            setTotalRecords(res.data.length)
         })
         .catch(error=>{
             console.log(error)
             navigate('/signin')
         })
-    },[])
+    }
+
+    //PAGINATION HANDLER FUNCTION
+    const handlepageCountChange=index=>{
+        // const skip = index*recordsPerPage
+        axios.get(`http://localhost:8000/menu/user/get/${index}`,
+        {
+            headers:{
+                authorization:`Bearer ${window.localStorage.getItem('bearer')}`
+            }
+        })
+        .then(res=>{
+            console.log(res.data.length, typeof res.data.length)
+            setItems(res.data.items)
+            setTotalRecords(res.data.length)
+        })
+        .catch(error=>{
+            console.log(error)
+            navigate('/signin')
+        })
+    }
 
     return(
         <>
@@ -61,6 +108,13 @@ function Menu(){
                     ) 
                 })
             }
+        </div>
+        <div className="row">
+            <div className="col-md-5 m-auto">
+                {[...Array(Math.ceil(totalRecords / recordsPerPage))].map((a, idx) => (
+                    <button key={idx} className="btn btn-primary m-2" onClick={()=>handlepageCountChange(idx*recordsPerPage)}>{idx + 1}</button>
+                ))}
+            </div>
         </div>
 
         </>
