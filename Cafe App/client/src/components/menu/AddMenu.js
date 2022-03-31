@@ -23,6 +23,7 @@ function AddMenu(){
         }
     },[])
 
+    // CHANGE HANDLER FUNCTION
     const handleChange=e=>{
         let  {name,value}=e.target
         setMenu({
@@ -33,14 +34,15 @@ function AddMenu(){
         })
     }
 
+    // UPLOAD IMAGE
     const uploadImage=e=>{
         let {name, files}=e.target
         setMenu({
             ...menu,[name]:files[0]
         })
-        console.log(name,files[0])
     }
 
+    // INPUT FIELD VALIDATION
     const validate=(name,value)=>{
         let {itemName , price , description , image}=menu
         
@@ -49,24 +51,23 @@ function AddMenu(){
             setHasError(true)
             return "Menu Item name cannot be empty"
         }
-        if(name === 'description' && value.trim().length ===0)
+        else if(name === 'description' && value.trim().length ===0)
         {
             setHasError(true)
             return "Menu Item description cannot be empty"
         }
-        if(name === 'price' && value.trim().length ===0)
+        else if(name === 'price' && value.trim().length ===0)
         {
             setHasError(true)
             return "Price name cannot be empty"
         }
         else
         {            
-            // if(itemName.trim() && price.trim() && description.trim()){
-                setHasError(false)
-            // }
+            setHasError(false)
         }
     }
 
+    // ADD MENU ITEMS BUTTON CLICK HANDLER
     const addItem = e =>{
         e.preventDefault()
         let formData = new FormData()
@@ -104,6 +105,7 @@ function AddMenu(){
         }
     }
 
+    // CANCLE BUTTON CLICK HANDLER
     const cancelHandler =e =>{
         setMenu({itemName:'',price:''})
         setErrors({})

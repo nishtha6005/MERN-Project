@@ -1,77 +1,7 @@
 const Menu = require('../model/model.menu')
 
-
-exports.getAllMenuItems= async (request,response)=>{
-    let limit = 2
-    try
-    {
-        const length = await Menu.find({isDeleted:false}).count()
-        const user = await Menu.find({isDeleted:false}).sort({menuCreatedTime:-1}).limit(limit).skip()
-        response.status(200).send({
-            success:true,
-            user:request.rootUser,
-            items:user,
-            length:length
-        })
-    }
-    catch(err)
-    {
-        response.status(400).send({
-            error: 'Your request could not be processed. Please try again.'
-        });
-
-    }
-}
-
-exports.getCreatedAsc = async (request,response)=>{
-    let limit = 2
-    let field=request.query.sort
-    let order = request.query.order === 'asc' ? 1 : -1
-    console.log(field, order)
-    try
-    {
-        const length = await Menu.find({isDeleted:false}).count()
-        
-        const user = await Menu.find({isDeleted:false}).sort({field:order})
-        
-        response.status(200).send({
-            success:true,
-            user:request.rootUser,
-            items:user,
-            length:length
-        })
-    }
-    catch(err)
-    {
-        response.status(400).send({
-            error: 'Your request could not be processed. Please try again.'
-        });
-    }
-}
-
-exports.search=(req,res)=>{
-    let pname = req.query.menu
-    limit=3
-    if(pname)
-    {
-        Menu.find({itemName:{$regex:pname,$options:/i/},isDeleted:false}).sort({menuCreatedTime:-1}).limit(3)
-        .then(result=>{
-                res.status(200)
-                .send({
-                    success:true,
-                    length:result.length,
-                    search:result
-                })            
-        })
-        .catch(error=>{
-            res.status(400).json({
-                error: 'Your request could not be processed. Please try again.'
-              });
-        })
-    }
-}
-
-exports.getOneMenuItem= async (request,response)=>{
+// GET MENU ITEM FOR ADMIN API
+exports.getMenuItemsForAdmin= async (request,response)=>{
     let limit = 3
     let skip=request.params.quesNo
     try
@@ -94,6 +24,8 @@ exports.getOneMenuItem= async (request,response)=>{
     }
 }
 
+
+// GET MENU ITEMS FOR USER API
 exports.getMenuItemsForUser= async (request,response)=>{
     let limit = 4
     let skip=request.params.quesNo
@@ -117,6 +49,8 @@ exports.getMenuItemsForUser= async (request,response)=>{
     }
 }
 
+
+// ADD MENU ITEM API
 exports.addMenuItem=(request,response)=>{
     console.log(request.file)
     const menu = new Menu({
@@ -143,6 +77,7 @@ exports.addMenuItem=(request,response)=>{
     })
 }
 
+// UPDATE MENU ITEM API
 exports.editMenuItem=(request,response)=>{
     const query={_id:request.params.id}
     const update={
@@ -167,6 +102,8 @@ exports.editMenuItem=(request,response)=>{
     })
 }
 
+
+// DELETE MENU ITEM API
 exports.deleteMenuItem=(request,response)=>{
     const query={_id:request.params.id}
     const update={
@@ -187,3 +124,123 @@ exports.deleteMenuItem=(request,response)=>{
         });
     })
 }
+
+// SEARCH MENU ITEMS BY NAME API
+exports.search=(req,res)=>{
+    let pname = req.query.menu
+    limit=3
+    if(pname)
+    {
+        Menu.find({itemName:{$regex:pname,$options:/i/},isDeleted:false}).sort({menuCreatedTime:-1}).limit(3)
+        .then(result=>{
+                res.status(200)
+                .send({
+                    success:true,
+                    length:result.length,
+                    search:result
+                })            
+        })
+        .catch(error=>{
+            res.status(400).json({
+                error: 'Your request could not be processed. Please try again.'
+              });
+        })
+    }
+}
+
+
+// GET AVAILABLE MENU ITEMS API
+exports.getAvailableItems = async (request,response)=>{
+    let limit = 3
+    let skip=request.params.quesNo
+    try
+    {
+        const length = await Menu.find({isDeleted:false,isAvailable:true}).count()
+        const menu = await Menu.find({isDeleted:false,isAvailable:true}).sort({menuCreatedTime:-1}).limit(limit).skip(skip)
+        response.status(200).send({
+            success:true,
+            user:request.rootUser,
+            items:menu,
+            length:length
+        })
+    }
+    catch(err)
+    {
+        response.status(400).send({
+            error: 'Your request could not be processed. Please try again.'
+        });
+
+    }
+}
+
+
+// GET UNAVAILABLE MENU ITEMS API
+exports.getUnavailableItems= async (request,response)=>{
+    let limit = 3
+    let skip=request.params.quesNo
+    try
+    {
+        const length = await Menu.find({isDeleted:false,isAvailable:false}).count()
+        const menu = await Menu.find({isDeleted:false,isAvailable:false}).sort({menuCreatedTime:-1}).limit(limit).skip(skip)
+        response.status(200).send({
+            success:true,
+            user:request.rootUser,
+            items:menu,
+            length:length
+        })
+    }
+    catch(err)
+    {
+        response.status(400).send({
+            error: 'Your request could not be processed. Please try again.'
+        });
+
+    }
+}
+
+
+// SORT MENU ITEMS : PRICE / MENU CREATED TIME APIS
+exports.getCreatedAsc = async (request,response)=>{
+    let limit = 4
+    let field=request.query.sort
+    let order = request.query.order === 'asc' ? 1 : -1
+    try
+    {
+        console.log(field, order)
+        const length = await Menu.find({isDeleted:false}).count()
+        console.log(length)
+        if (field == 'price')
+        {
+            console.log('Price')
+            const user = await Menu.find({isDeleted:false}).sort({price:order}).limit(limit)
+            response.status(200).send({
+                success:true,
+                user:request.rootUser,
+                items:user,
+                length:length
+            })
+        }
+        else if (field == "menuCreatedTime")
+        {
+            console.log('Menu')
+            const user = await Menu.find({isDeleted:false}).sort({menuCreatedTime:order}).limit(limit)
+            response.status(200).send({
+                success:true,
+                user:request.rootUser,
+                items:user,
+                length:length
+            })
+        }
+        
+    }
+    catch(err)
+    {
+        response.status(400).send({
+            error: 'Your request could not be processed. Please try again.'
+        });
+    }
+}
+
+
+
+

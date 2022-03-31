@@ -22,6 +22,7 @@ function SignIn(){
         setCredentials({...credentials,[name]:value})
     }
 
+    // LOGIN FUNCTION
     const loginHandler=e=>{
         e.preventDefault()
         let {email,password} = credentials
@@ -38,16 +39,13 @@ function SignIn(){
             .then(res=>{
                 window.localStorage.setItem("bearer",res.data.token) 
                 window.localStorage.setItem("admin",res.data.isAdmin)
-                // toast.success("Login Successfull",{
-                //     position: "top-center",
-                //     autoClose: 1000,
-                // })     
                 if(res.data.isAdmin === true)
-                    return navigate('/admin',{state:{bearer:res.data.token,isAdmin:res.data.isAdmin}})
+                    return navigate('/admin')
                 else 
-                    return navigate('/menu-items',{state:{bearer:res.data.token,isAdmin:res.data.isAdmin}})
+                    return navigate('/menu-items')
             })
             .catch(error=>{
+                console.log(error.status)
                 toast.error("Invalid User Credentials",{
                     position: "top-center",
                     autoClose: 3000,

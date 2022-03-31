@@ -2,23 +2,18 @@ import React, {useEffect,useState} from "react";
 import { Link, useLocation } from 'react-router-dom'
 
 function Navbar(){
-    // const [bearer,setbearer]=useState('')
-    // const [isAdmin, setIsAdmin]=useState()
+    const [bearer,setbearer]=useState('')
+    const [isAdmin, setIsAdmin]=useState()
 
-    var isAdmin = window.localStorage.getItem("admin")
-    console.log(isAdmin)
+    const location = useLocation()
     
     useEffect(()=>{
-        // var isAdmin = window.localStorage.getItem("admin")
-        // const token = window.localStorage.getItem("bearer")
-        // const admin = window.localStorage.getItem("admin")
-        // console.log("admin", admin)
-        // console.log("bearer", token)
-        // setbearer(token)
-        // setIsAdmin(admin)
+        const token = window.localStorage.getItem("bearer")
+        const admin = window.localStorage.getItem("admin")
+        setbearer(token)
+        setIsAdmin(admin)
     })
 
-    
     return(
         <>
             <nav className="navbar navbar-expand-md navbar-dark bg-dark">
@@ -42,7 +37,18 @@ function Navbar(){
                             </Link>
                         </li>
                         {
-                            isAdmin === 'true' &&
+                            isAdmin == 'false' &&
+                            <li className="nav-item">
+                                <Link 
+                                    className="nav-link" 
+                                    to="/menu-items"
+                                    data-bs-target="#myModal" 
+                                    data-bs-toggle="modal">Menu
+                                </Link>
+                            </li>
+                        }
+                        {
+                            isAdmin == 'true' &&
                             <>
                                 <li className="nav-item">
                                     <Link 
@@ -61,22 +67,9 @@ function Navbar(){
                                     </Link>
                                 </li>
                             </>
-                        }
+                        }               
                         {
-                            isAdmin === 'false' &&
-                            <li className="nav-item">
-                                <Link 
-                                    className="nav-link" 
-                                    to="/menu-items"
-                                    data-bs-target="#myModal" 
-                                    data-bs-toggle="modal">Menu
-                                </Link>
-                            </li> 
-                        }
-                                                
-                        {
-                            isAdmin == null ?
-                            // bearer === null || bearer === '' ?
+                            bearer === null || bearer === '' ?
                             <li className="nav-item">
                                 <Link 
                                     className="nav-link" 

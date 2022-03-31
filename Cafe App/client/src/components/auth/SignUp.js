@@ -17,6 +17,7 @@ function SignUp(){
         document.title='Sign Up'
     })
 
+    // CHANGE HANDLER FUNCTION
     const handleChange=e=>{
         let {name,value}=e.target
         setUser({...user,[name]:value})
@@ -25,11 +26,12 @@ function SignUp(){
         })
     }
 
+    // INPUT FIELD VALIDATION 
     const validate=(name,value)=>{
         if(name==='username' && !/^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{6,}$/.test(value))
         {
             setHasError(true)
-            return 'Enter Valid Username'
+            return 'Enter Valid Username. Username length must be at least 6 characters'
         }
         if(name==='email' && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value.toLowerCase()))
         {
@@ -52,6 +54,7 @@ function SignUp(){
         }
     }
 
+    // SIGN UP FUNCTION
     const signupHandler=e=>{
         e.preventDefault()
         let {username,email,password,confirmPassword} = user
@@ -62,12 +65,6 @@ function SignUp(){
                 autoClose: 3000,
             })
         }
-        // else if(errors==={})
-        // {
-        //     setAlert({hasError:true,alertMsg:'Please enter valid data'})
-        //     setUser({username:'',email:'',password:'',confirmPassword:''})
-        //     setErrors({})
-        // }
         else
         {
             axios.post('http://localhost:8000/auth/signup',user)
@@ -80,12 +77,7 @@ function SignUp(){
                         autoClose: 3000,
                     })   
                     setUser({username:'',email:'',password:'',confirmPassword:''})
-                    // navigate('/signin')
                 }
-                // else if(res.status===401)
-                // {
-                //     window.alert(res.data.message)
-                // }
             })
             .catch(err=>{
                 toast.error("User Already Exists",{

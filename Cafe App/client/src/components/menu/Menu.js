@@ -30,7 +30,6 @@ function Menu(){
             }
         })
         .then(res=>{
-            console.log(res.data.length, typeof res.data.length)
             setItems(res.data.items)
             setUSername(res.data.user.username)
             setTotalRecords(res.data.length)
@@ -62,7 +61,6 @@ function Menu(){
 
     // SEARCH MENU ITEMS BY THEIR NAMES
     const searchItems=(e)=>{
-        console.log(typeof e.target.value.trim())
         if(e.target.value.trim())
         {
             axios.get(`http://localhost:8000/menu/search?menu=${e.target.value}`,
@@ -85,21 +83,53 @@ function Menu(){
         }
     }
 
+    // SORT MENU ITEMS BY PRICE IN ASC OR DESC ORDER
+    const sort = e=>{
+        let {name, value}=e.target
+        let sort = value.split(" ")
+        axios.get(`http://localhost:8000/menu/get/items?sort=${sort[0]}&order=${sort[1]}`,
+        {
+            headers:{
+                authorization:`Bearer ${window.localStorage.getItem('bearer')}`
+            }
+        })
+        .then(res=>{
+            setItems(res.data.items)
+            setTotalRecords(res.data.length)
+        })
+        .catch(err=>{
+            console.log(err)
+        })
+
+    }
+
     return(
         <>
         <div className='row my-4'>
             <h1 className='text-center text-secondary'>Welcome to CafeApp {username}!</h1>
             {/* SEARCH BAR */}
-            <div className='text-center m-2'>
-                <input 
-                    type='text' 
-                    name='search' 
-                    className='input-control px-2'
-                    aria-label="Search "
-                    size='40'
-                    placeholder=' Search Menu Items By Name' 
-                    onKeyUp={(e)=>searchItems(e)}
-                />
+            <div className='row'>
+                <div className='col-md-4'></div>
+                <div className='col-md-4'>
+                    <div className='text-center m-2'>
+                        <input 
+                            type='text' 
+                            name='search' 
+                            className='input-control px-2'
+                            aria-label="Search "
+                            size='40'
+                            placeholder=' Search Menu Items By Name' 
+                            onKeyUp={(e)=>searchItems(e)}
+                        />
+                    </div>
+                </div>
+                <div className='col-md-4'>
+                    <select className=" dropdown m-2" onChange={(e)=>sort(e)} name='menu-items'>
+                        <option value='select' selected disabled>Sort By</option>
+                        <option value='price asc'>Price Low To High</option>
+                        <option value='price desc'>Price High To Low</option>
+                    </select>
+                </div>
             </div>
             {
                 items.map((item,index)=>{
@@ -128,10 +158,10 @@ function Menu(){
                 })
             }
         </div>
-        
+
         {/* PAGINATION BUTTONS */}
         { 
-            Number(totalRecords) <= Number(recordsPerPage) && 
+           ! ( Number(totalRecords) <= Number(recordsPerPage)) && 
             <div className="row">
                 <div className="col-md-5 m-auto">
                     {

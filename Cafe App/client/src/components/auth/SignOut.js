@@ -10,6 +10,11 @@ function SignOut(){
         navigate('/')
     })
 
+    return(
+        <>
+        </>
+    )
+
 }
 
 export default SignOut

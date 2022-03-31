@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const Auth = require('../model/model.auth')
 
+// SIGN-UP API
 exports.signup = async (request,response)=>{
     try
     {
@@ -57,6 +58,7 @@ exports.signup = async (request,response)=>{
     }
 }
 
+// SIGN-IN API
 exports.signin = async (request,response)=>{
     try
     {
@@ -97,13 +99,6 @@ exports.signin = async (request,response)=>{
                     // ASSIGNING TOKEN GENERATED USING JWT TO THE USER 
                     userExists.token = token
 
-                    // SETTING TOKEN INTO COOKIE
-                    // response.cookie("JWT",token, {
-                    //     // EXPIRES IN 10 Minutes
-                    //     expires:new Date(Date.now() + 600000),
-                    //     httpOnly :true
-                    // })
-
                     // SENDING RESPONSE 
                     response.status(200).send({
                         success: true,
@@ -131,7 +126,7 @@ exports.signin = async (request,response)=>{
     catch(err)
     {
         console.log(err)
-        response.status(400).send({ 
+        response.status(500).send({ 
             success: false 
         });
     }

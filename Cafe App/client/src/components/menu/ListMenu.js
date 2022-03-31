@@ -5,7 +5,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function ListMenu(){
-    const [items,setItems]=useState([])
     const [filteredItems,setFilteredItems]=useState([])
     const [selectedId, setSelectedId] = useState(0)
     const [updatedData, setUpdatetedData] = useState({
@@ -32,7 +31,7 @@ function ListMenu(){
 
     // GET MENU ITEMS
     const getMenuItems=()=>{
-        axios.get(`http://localhost:8000/menu/get/0`,
+        axios.get(`http://localhost:8000/menu/get/all/0`,
         {
             headers:{
                 authorization:`Bearer ${window.localStorage.getItem('bearer')}`
@@ -68,7 +67,7 @@ function ListMenu(){
 
     //PAGINATION HANDLER FUNCTION
     const handlepageCountChange=index=>{
-        axios.get(`http://localhost:8000/menu/get/${index}`,
+        axios.get(`http://localhost:8000/menu/get/all/${index}`,
         {
             headers:{
                 authorization:`Bearer ${window.localStorage.getItem('bearer')}`
@@ -86,7 +85,7 @@ function ListMenu(){
         })
     }
 
-    // VALIDATION OF FIELDS
+    // INPUT FIELD VALIDATION 
     const validate=(name,value)=>{
         if(name === 'itemName' && value.trim().length ===0)
         {
@@ -122,8 +121,6 @@ function ListMenu(){
 
     // UPDATE HANDLER FUNCTION TO UPDATE MENU ITEMS DATA
     const updateHandler=(id)=>{
-        // ref.current. = updatedData.image.split('_')[1]
-        // console.log("UP",updatedData.image)
         let formData = new FormData()
         formData.append('image',updatedData.image)
         formData.append('itemName',updatedData.itemName)
@@ -205,27 +202,62 @@ function ListMenu(){
             getMenuItems()
         }
     }
-   
-    // ISO TO LOCAL TIME CONVERSION
-    // const getDateTime=(datetime)=>{
-    //     const date = new Date(datetime)
-    //     return date.toLocaleString()
-    // }
-    
+
+    // DROPDOWN SELECTION HANDLER FUNCTION
+    const selectChangeHandle=e=>{
+        let {name,value}=e.target
+        if (value == 'all')
+        {
+            getMenuItems()
+        }
+        else
+        {
+            axios.get(`http://localhost:8000/menu/get/${value}/0`,{
+            headers:{
+                authorization:`Bearer ${window.localStorage.getItem('bearer')}`
+            }
+            })
+            .then(res=>{
+                setItems(res.data.items)
+                setFilteredItems(res.data.items)
+                setTotalRecords(res.data.length)
+            })
+            .catch(error=>{
+                console.log(error)
+                navigate('/signin')
+            })
+        }
+        
+    }
+
     return(    
     <>
         <h2 className='text-center m-3'>List of Menu Items</h2>
-        <div className='text-center m-2'>
-            <input 
-                type='text' 
-                name='search' 
-                className='input-control px-2'
-                aria-label="Search "
-                size='40'
-                placeholder=' Search Menu Items By Name' 
-                onKeyUp={(e)=>searchItems(e)}
-            />
+        <div className='row'>
+            <div className='col-md-4'></div>
+            <div className='col-md-4'>
+                <div className='text-center m-2'>
+                    <input 
+                        type='text' 
+                        name='search' 
+                        className='input-control px-2'
+                        aria-label="Search "
+                        size='40'
+                        placeholder=' Search Menu Items By Name' 
+                        onKeyUp={(e)=>searchItems(e)}
+                    />
+                </div>
+            </div>
+            <div className='col-md-4'>
+                <select className=" dropdown m-2" onChange={(e)=>selectChangeHandle(e)} name='menu-items'>
+                    <option value='select' selected disabled>Select Menu Items Type</option>
+                    <option value='all'>All</option>
+                    <option value='available-menu-items'>Available</option>
+                    <option value='unavailable-menu-items'>Unavailable</option>
+                </select>
+            </div>
         </div>
+        
         <div className='row'>
         {
             filteredItems
@@ -308,8 +340,6 @@ function ListMenu(){
                                                 placeholder='Upload Image' 
                                                 name='image' 
                                                 id='image'
-                                                // src={updatedData.image.split('_')[1]}
-                                                // ref={updatedData.image.split('_')[1]}
                                                 ref={ref}
                                                 required={true}
                                                 encType="multipart/form-data"
@@ -336,8 +366,6 @@ function ListMenu(){
                                         <h5 className="card-title mt-2">{item.itemName}</h5>
                                         <p className="card-text text-justify">{item.description}</p>
                                         <h6>Available : {item.isAvailable ? 'Yes' : 'No'}</h6>
-                                        {/* <h6>Added Time : {getDateTime(item.menuCreatedTime)}</h6>
-                                        <h6>Updated Time : {getDateTime(item.menuUpdateTime)}</h6> */}
                                         <h5 className="card-text text-danger">Price : &#8377;{item.price}</h5>
                                         <div className='form-group text-center'>
                                             <button className="btn btn-outline-warning mx-5 mt-3" 
@@ -360,7 +388,7 @@ function ListMenu(){
         }
         </div>
         { 
-            totalRecords != recordsPerPage &&  
+            ! (Number(totalRecords) <= Number(recordsPerPage)) && 
             <div className="row">
                 <div className="col-md-5 m-auto">
                     {[...Array(Math.ceil(totalRecords / recordsPerPage))].map((a, idx) => (
