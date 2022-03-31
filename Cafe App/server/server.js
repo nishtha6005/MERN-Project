@@ -16,6 +16,13 @@ app.use('/public',express.static('public'))
 app.use('/auth',auth)
 app.use('/menu',menu)
 
+// Server Error Handling Middleware
+app.use((err, req, res, next) => {  
+    res.status(err.statusCode || 500).json({
+      message: err.message || 'Internal Server Error'
+    });
+  });
+
 mongoose.connect(process.env.MONGOURL)
 .then(
     console.log("Mongoose Connected")
