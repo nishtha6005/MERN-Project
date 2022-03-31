@@ -38,7 +38,6 @@ function ListMenu(){
             }
         })
         .then(res=>{
-            setItems(res.data.items)
             setFilteredItems(res.data.items)
             setTotalRecords(res.data.length)
         })
@@ -75,7 +74,6 @@ function ListMenu(){
         })
         .then(res=>{
             console.log(res.data.length, typeof res.data.length)
-            setItems(res.data.items)
             setFilteredItems(res.data.items)
             setTotalRecords(res.data.length)
         })
@@ -218,7 +216,6 @@ function ListMenu(){
             }
             })
             .then(res=>{
-                setItems(res.data.items)
                 setFilteredItems(res.data.items)
                 setTotalRecords(res.data.length)
             })
