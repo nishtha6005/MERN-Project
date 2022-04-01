@@ -207,12 +207,12 @@ exports.getCreatedAsc = async (request,response)=>{
     try
     {
         console.log(field, order)
-        const length = await Menu.find({isDeleted:false}).count()
+        const length = await Menu.find({isDeleted:false,isAvailable:true}).count()
         console.log(length)
         if (field == 'price')
         {
             console.log('Price')
-            const user = await Menu.find({isDeleted:false}).sort({price:order}).limit(limit)
+            const user = await Menu.find({isDeleted:false,isAvailable:true}).sort({price:order}).limit(limit)
             response.status(200).send({
                 success:true,
                 user:request.rootUser,

@@ -142,6 +142,7 @@ function ListMenu(){
         })
         .catch(err=>{
             console.log(err.response.data)
+            navigate('/signin')
         })
     }
 
@@ -165,6 +166,7 @@ function ListMenu(){
             })
             .catch(err=>{
                 console.log(err.response.data)
+                navigate('/signin')
             })
         }
     }
@@ -194,6 +196,7 @@ function ListMenu(){
             })
             .catch(err=>{
                 console.log(err)
+                navigate('/signin')
             })
         }
         else{

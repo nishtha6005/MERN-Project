@@ -75,6 +75,7 @@ function Menu(){
             })
             .catch(err=>{
                 console.log(err)
+                navigate('/signin')
             })
         }
         else
@@ -84,24 +85,24 @@ function Menu(){
     }
 
     // SORT MENU ITEMS BY PRICE IN ASC OR DESC ORDER
-    const sort = e=>{
-        let {name, value}=e.target
-        let sort = value.split(" ")
-        axios.get(`http://localhost:8000/menu/get/items?sort=${sort[0]}&order=${sort[1]}`,
-        {
-            headers:{
-                authorization:`Bearer ${window.localStorage.getItem('bearer')}`
-            }
-        })
-        .then(res=>{
-            setItems(res.data.items)
-            setTotalRecords(res.data.length)
-        })
-        .catch(err=>{
-            console.log(err)
-        })
+    // const sort = e=>{
+    //     let {name, value}=e.target
+    //     let sort = value.split(" ")
+    //     axios.get(`http://localhost:8000/menu/get/items?sort=${sort[0]}&order=${sort[1]}`,
+    //     {
+    //         headers:{
+    //             authorization:`Bearer ${window.localStorage.getItem('bearer')}`
+    //         }
+    //     })
+    //     .then(res=>{
+    //         setItems(res.data.items)
+    //         setTotalRecords(res.data.length)
+    //     })
+    //     .catch(err=>{
+    //         console.log(err)
+    //     })
 
-    }
+    // }
 
     return(
         <>
@@ -123,13 +124,13 @@ function Menu(){
                         />
                     </div>
                 </div>
-                <div className='col-md-4'>
+                {/* <div className='col-md-4'>
                     <select className=" dropdown m-2" onChange={(e)=>sort(e)} name='menu-items'>
                         <option value='select' selected disabled>Sort By</option>
                         <option value='price asc'>Price Low To High</option>
                         <option value='price desc'>Price High To Low</option>
                     </select>
-                </div>
+                </div> */}
             </div>
             {
                 items.map((item,index)=>{
